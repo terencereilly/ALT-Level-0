@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title> Terence Reilly - 3D Interactive Reel </title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+   
+    <!-- Load A-Frame Framework -->
+    <script src="https://aframe.io/releases/0.9.2/aframe.min.js"></script>  
+      
+    <script src="https://cdn.glitch.com/17947ef2-ba4e-4771-b362-5ad3721e70bf%2Fhref.js?1524223693706"></script>
+      
+    <script src="https://cdn.glitch.com/ec5b44d4-a61e-4e39-a3dd-e10748aed261%2Faframe-extras.js?1524237399654"></script>
+      
+    <!-- Load Event Set Component - Enables you to click and interact with A-Frame code -->
+    <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script>
+        
+    <!-- Aframe Layout component -->
+    <script src="https://unpkg.com/aframe-layout-component@5.3.0/dist/aframe-layout-component.min.js"></script>
+      
+   <!-- Aframe Gradient Sky component -->  
+   <script src="https://rawgit.com/zcanter/aframe-gradient-sky/master/dist/gradientsky.min.js"></script>   
+   
+   <!-- Add this -->
+   <!-- https://github.com/wizgrav/aframe-effects -->
+      
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Styles - CSS --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!--  --> 
+  <!-------------------------------------------------------------------------------------------------------->      
+  <style>
+       
+        #play-button {
+        position: fixed;
+        top: calc(44% - 1em);
+        left: calc(50% - 2em);
+        width: 4em;
+        height: 2em;
+        z-index: 10;
+        }
+
+        #pause-button {
+        position: fixed;
+        top: calc(56% - 1em);
+        left: calc(50% - 2em);
+        width: 4em;
+        height: 2em;
+        z-index: 10;
+        } 
+          
+   </style> 
+      
+      
+      
+      
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Register Component --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Along a path component -->
+  <!-------------------------------------------------------------------------------------------------------->      
+ 
+      <script>
+        (function() {
+        'use strict';
+
+        var alongpathComp = {
+          schema: {
+            path     : { default: ''    },
+            closed   : { default: false },
+            dur      : { default: 1000  }
+          },
+
+          init: function() {
+              var ent = this.el;
+              var d = this.data;
+              var points = d.path.split(' ').map(function(p) {
+                  p = p.split(',');
+                  return new THREE.Vector3(
+                      parseFloat(p[0]),
+                      parseFloat(p[1]),
+                      parseFloat(p[2])
+                  );
+              });
+              var ctor = d.closed ? 'ClosedSplineCurve3' : 'SplineCurve3';
+              var curve = new THREE[ctor](points);
+
+              var onFrame = function onFrame(t) {
+                window.requestAnimationFrame(onFrame);
+                t = t % d.dur;
+                var i = t / d.dur;
+                try {
+                  var p = curve.getPoint(i);
+                  ent.setAttribute('position', p);
+                } catch (ex) {}
+              };
+
+              onFrame();
+          },
+
+          update: function(oldData) {},
+
+          remove: function() {}
+        };
+
+        AFRAME.registerComponent('alongpath', alongpathComp);
+        })();
+    
+</script>
+      
+   
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Register Component --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Gltf Part Selection Component -- Split gltf export into different model parts to access for code -->
+  <!-------------------------------------------------------------------------------------------------------->      
+
+       <script>
+      AFRAME.registerComponent('model-subset', {
+  schema: {
+    target: {default: '', type: 'selector'},
+    name: {default: ''}
+  },
+  init: function () {
+    var el = this.el;
+    var data = this.data;
+    data.target.addEventListener('model-loaded', function (e) {
+      var model = e.detail.model;
+      var subset = model.getObjectByName(data.name);
+      el.setObject3D('mesh', subset.clone());
+    });
+  },
+  update: function () { /* ... */ },
+  remove: function () { /* ... */ }
+});
+      
+      
+  </script>    
+               
+     
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Register Component --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Audio Component --> <!-- Play audio on mouse clicks -->
+  <!-------------------------------------------------------------------------------------------------------->          
+
+      
+ <!-- This one works -->     
+     <script>
+  AFRAME.registerComponent('audiohandler', {
+    init: function() {
+      let playing = false;
+      let audio = document.querySelector("#neigh");
+      this.el.addEventListener('click', () => {
+        if (!playing) {
+          audio.play();
+        } else {
+          audio.pause();
+          audio.currentTime;
+        }
+        playing = !playing;
+      });
+    }
+  })
+
+</script>
+      
+      
+     
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Register Component --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Video Component --> <!-- Play videos on mouse click -->
+  <!-------------------------------------------------------------------------------------------------------->          
+
+      
+ <!-- This one works -->    
+  <script>
+      AFRAME.registerComponent('videohandler', {
+      
+        init: function() {
+              let playing = false;
+
+              let video = document.querySelector("#vid1");
+        
+              this.el.addEventListener('click', () => {
+                if (!playing) {
+                  video.play();
+
+                } else {
+                  video.pause();
+                  video.currentTime; 
+                } 
+
+                playing = !playing;
+              });
+            }
+          })
+
+</script>  
+      
+ <!-- This one works - not using right now though -->    
+  <script>
+      AFRAME.registerComponent('videohandler1', {
+      
+        init: function() {
+              let playing = false;
+
+              let video1 = document.querySelector("#vid2");
+
+              this.el.addEventListener('click', () => {
+                if (!playing) {
+                  video1.play();
+
+                } else {
+                  video1.pause();
+                  video1.currentTime; 
+                } 
+
+                playing = !playing;
+              });
+            }
+          })
+
+</script>  
+  
+      
+      
+      
+      
+ <!-------------------------------------------------------------------------------------------------------->
+  <!-- Register Component --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Change Colour Component --> 
+  <!-------------------------------------------------------------------------------------------------------->       
+      
+    <Script> 
+      // Component to change to a sequential color on click.
+AFRAME.registerComponent('cursor-listener', {
+  init: function () {
+    var lastIndex = -1;
+    var COLORS = ['red', 'green', 'blue'];
+    this.el.addEventListener('click', function (evt) {
+      lastIndex = (lastIndex + 1) % COLORS.length;
+      this.setAttribute('material', 'color', COLORS[lastIndex]);
+      console.log('I was clicked at: ', evt.detail.intersection.point);
+    });
+  }
+});
+      
+</Script>
+      
+      
+      
+      
+      
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Register Component --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Pause and play videos with buttons Component --> 
+  <!-------------------------------------------------------------------------------------------------------->   
+      
+      <script> window.addEventListener('click', function () {  
+               var v = document.querySelector('#vid');
+                   v.pause(); 
+          }); 
+      </script>
+      
+      
+ 
+      
+      
+</head>
+ 
+<body>
+     
+  <a-scene fog="type: linear; 
+               color: #222;
+               near: 0.01;
+               far: 800">
+           
+      <!-------------------------------------------------------------------------------------------------------->
+      <!-- Asset Management System --> 
+      <!-------------------------------------------------------------------------------------------------------->
+      <!-- Load all my assets --> 
+      <!-------------------------------------------------------------------------------------------------------->  
+      <a-assets>    
+          
+        <img id="skyTexture" crossorigin="anonymous" src="https://cdn.glitch.com/49eedea1-b411-4200-945d-37ee83685cf4%2FMilkyway_V1.jpg?1550705749631">
+          
+        <img id="texture01" crossOrigin="anonymous" src="https://cdn.glitch.com/e1692e96-b543-451a-b75d-36e0b3b850e7%2FChecker_Texture_V01.jpg?1550581281017">
+         
+        <img id="texture02" crossOrigin="anonymous" src="https://cdn.glitch.com/e1692e96-b543-451a-b75d-36e0b3b850e7%2FBronze_Dirt_Texture_01_V01.jpg?1550581286437">
+     
+        <img id="texture03" crossorigin="anonymous" src="https://cdn.glitch.com/d022b461-dd24-4eac-9d07-cf08b96bdbd6%2FMarble_SlabWhite_1K_albedo.jpg?1550701425460">
+    
+        <img id="texture04" crossorigin="anonymous" src="https://cdn.glitch.com/1d7f0b18-17e4-4f2b-82b9-3ffbfb200207%2FTriangle_Still_01.jpg?1550737605553">
+               
+        <!-- Gradient Welcome world -->
+        <img id="texture06" crossorigin="anonymous" src="/3dfiles/Grad_Ramp_Texture_03_V01.jpg">
+          
+        <!-- Gravity Vase Image -->
+        <img id="texture07" crossorigin="anonymous" src="/3dfiles/Gravity-Vase_1080_Front.jpg">
+                             
+        <a-mixin id="image" 
+                 geometry="primitive: plane; height: 2; width: 2"
+                 material="shader: flat">
+        </a-mixin>   
+ 
+        <img id="everglades" crossorigin="anonymous" src="3dfiles/gradient1.jpg">
+        <img id="lassen" crossorigin="anonymous" src="3dfiles/gradient2.jpg">
+        <img id="pinnacles" crossorigin="anonymous" src="3dfiles/Grad_Ramp_Texture_01_V01.jpg">
+        <img id="redwoods" crossorigin="anonymous" src="3dfiles/Grad_Ramp_Texture_02_V01.jpg">
+        <img id="sequoia" crossorigin="anonymous" src="3dfiles/Grad_Ramp_Texture_04_V01.jpg">
+        <img id="yosemite" crossorigin="anonymous" src="3dfiles/Grad_Ramp_Texture_03_V01.jpg">
+           
+       
+          
+     <!-------------------------------------------------------------------------------------------------------->
+     <!-- AUDIO ASSETS --> 
+     <!-------------------------------------------------------------------------------------------------------->
+     <!-- All Audio -->
+     <!-------------------------------------------------------------------------------------------------------->  
+
+      <!-- This plays the audio automatically -->    
+      <audio id="neigh" 
+             src="https://supermedium.github.io/oasis-audio/egg/strangerthings.mp3"
+             crossOrigin="anonymous"
+             autoplay="true"
+             loop="true">
+      </audio>
+
+
+     <!-------------------------------------------------------------------------------------------------------->
+     <!-- VIDEO ASSETS --> 
+     <!-------------------------------------------------------------------------------------------------------->
+     <!-- All Videos -->
+     <!--------------------------------------------------------------------------------------------------------> 
+
+
+      <!-- Character Reel - Video works with pause and play button + Fuse control on Aframe Camera -->
+      <video id="vid1" 
+             src="https://cdn.glitch.com/4f0c6e41-58a5-40a3-aae9-e590f1f0a46a%2FCharacterReel_V02.webm?1548723889741">
+      </video>
+
+
+
+
+      <!-- Video works with pause and play button - WORKS on Safari, Chrome and Firefox on mobile ! -->
+      <video id="vid3" 
+             src="https://cdn.glitch.com/f742948b-5853-47ae-aa00-8a56b33ad2c4%2FPreview_09.mov?1546914110197"
+             crossOrigin="anonymous"
+             autoplay="false"
+             loop="true"
+             style="display: bold">
+      </video>
+          
+                   
+     <!-------------------------------------------------------------------------------------------------------->
+     <!--For Ref Only --> 
+     <!-------------------------------------------------------------------------------------------------------->
+     <!-- Tags for Asset Management System -->
+     <!--------------------------------------------------------------------------------------------------------> 
+     <!--
+     <a-asset-item> - Miscellaneous assets such as 3D models and materials
+     <audio> - Sound files
+     <img> - Image textures
+     <video> - Video textures -->
+
+     </a-assets>
+      
+         
+      
+   <!-------------------------------------------------------------------------------------------------------->
+   <!-- HTML Buttons --> 
+   <!-------------------------------------------------------------------------------------------------------->
+   <!-- Variety of html buttons -->
+   <!-------------------------------------------------------------------------------------------------------->   
+   <button id="play-button">Play</button>
+   <button id="pause-button">Pause</button>
+     
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- WELCOME --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Welcome to my Demo Reel -->
+  <!-------------------------------------------------------------------------------------------------------->  
+  <a-entity position="0 2.6 0"
+               rotation="10 0 0"> 
+         
+         <a-text value="15/07/2019:  Available for Work" 
+                  color="#FAFAFA" 
+                  position="2 0.7 -11" 
+                  align="center" 
+                  rotation="0 0 0" 
+                  scale="0.8 0.8 0.8">
+         </a-text>
+          
+         
+          <a-entity position="0 0 -10" 
+                    geometry="primitive: plane; height: auto; width: auto"
+                    material="shader: gradient; side: double; topColor: 0 0 0; bottomColor: 155 155 155; offset: 5;"
+                    audiohandler
+                    text="width: 6; value: Terence Reilly">
+          </a-entity>
+         
+        
+         
+         <a-entity position="0 -0.35 -10" 
+                   geometry="primitive: plane; height: auto; width: auto"
+                   material="shader: gradient; side: double; topColor: 0 0 0; bottomColor: 155 155 155; offset: 5;"
+                   text="width: 6; value: Digital Designer | Animator ">
+          </a-entity>
+      </a-entity>
+      
+        
+      
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- AUDIO --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Choose Your own Audio -->
+  <!-------------------------------------------------------------------------------------------------------->  
+     <a-entity position="0 7 0"
+               rotation="45 0 0"> 
+         
+         <a-text value="Choose your Music" 
+                  color="#FAFAFA" 
+                  position="-3.4 1.5 -11" 
+                  align="center" 
+                  rotation="0 0 0" 
+                  scale="5 5 5">
+         </a-text>
+          
+         
+          <a-entity position="0 0 -10" 
+                    geometry="primitive: plane; height: auto; width: auto"
+                    material="shader: gradient; side: double; topColor: 0 0 0; bottomColor: 155 155 155; offset: 5;"
+                    audiohandler
+                    text="width: 15; value: Stranger Things.">
+          </a-entity>
+         
+        
+         
+         <a-entity position="0 -1 -10" 
+                   geometry="primitive: plane; height: auto; width: auto"
+                   material="shader: gradient; side: double; topColor: 0 0 0; bottomColor: 155 155 155; offset: 5;"
+                   text="width: 15; value: ">
+          </a-entity>
+      </a-entity>
+      
+      
+      
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- VISUAL PATH -->     
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Path - Select music -->
+  <!-------------------------------------------------------------------------------------------------------->      
+      
+      
+   <!-- Good layout setup for pop ups when hover on objects platforms -->  
+  
+       
+       <a-entity  position="0 -15 -15"
+                  rotation="-90 0 0"
+                  geometry="primitive: plane; height: 15; width: 15"
+                  src="#texture01"
+                  material="wireframe: true"> 
+       </a-entity>   
+      
+      
+      <a-entity  position="-15 -15 0"
+                  rotation="-90 0 0"
+                  geometry="primitive: plane; height: 15; width: 15"
+                  src="#texture01"
+                  material="wireframe: true"> 
+       </a-entity>  
+      
+            
+      <a-entity  position="15 -15 0"
+                  rotation="-90 0 0"
+                  geometry="primitive: plane; height: 15; width: 15"
+                  src="#texture01"
+                  material="wireframe: true"> 
+       </a-entity>   
+      
+        
+ 
+ 
+                
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- AUDIO PATH --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Choose Your own Audio -->
+  <!-------------------------------------------------------------------------------------------------------->  
+     <a-entity position="0 0 -18" 
+               rotation="-90 0 0">         
+          
+          <a-text value="3D Interactive Design" 
+                  color="#FAFAFA" 
+                  position="0 0 -11" 
+                  align="center" 
+                  rotation="0 0 0" 
+                  scale="6 6 6">
+         </a-text>
+         
+         <a-text value="WebVR + Web GL" 
+                 color="#FAFAFA" 
+                 position="0 -1 -11" 
+                 align="center" 
+                 rotation="0 0 0" 
+                 scale="4 4 4">
+         </a-text>
+         
+      </a-entity>
+      
+      
+      
+      
+     <a-entity position="-18 0 0" 
+           rotation="-90 90 0">         
+
+       <a-text value="Art + Design" 
+              color="#FAFAFA" 
+              position="0 0 -11" 
+              align="center" 
+              rotation="0 0 0" 
+              scale="6 6 6">
+      </a-text>
+
+      <a-text value="Character Design | Illustration" 
+             color="#FAFAFA" 
+             position="0 -1 -11" 
+             align="center" 
+             rotation="0 0 0" 
+             scale="4 4 4">
+      </a-text>
+
+   </a-entity>
+      
+      
+      
+      
+      
+   <a-entity position="18 0 0" 
+           rotation="-90 -90 0">         
+
+       <a-text value="2D + 3D Design & Animation" 
+              color="#FAFAFA" 
+              position="0 0 -11" 
+              align="center" 
+              rotation="0 0 0" 
+              scale="6 6 6">
+      </a-text>
+
+      <a-text value="Mixed Media" 
+             color="#FAFAFA" 
+             position="0 -1 -11" 
+             align="center" 
+             rotation="0 0 0" 
+             scale="4 4 4">
+      </a-text>
+
+   </a-entity>
+      
+     
+      
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- BG TEXT INT --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Camera Static -->
+  <!--------------------------------------------------------------------------------------------------------> 
+      
+      
+       <!-- BG for Motion Text Welcome -->
+        <a-entity geometry="primitive: circle" 
+                  position="-5 72 -180"
+                  rotation="0 0 45"
+                  scale="20 20"
+                  material="shader: gradient; side: double; topColor: 0 0 0; bottomColor: 155 155 155; offset: 15;">
+        </a-entity> 
+      
+      
+      
+      <!-- Exit Motion World -->
+        <a-entity geometry="primitive: circle" 
+                  position="0 72 180"
+                  rotation="0 0 45"
+                  scale="20 20"
+                  material="shader: gradient; side: double; topColor: 0 0 0; bottomColor: 155 155 155; offset: 15;">
+        </a-entity> 
+      
+      <!-- Pink - Purple Gradient -->
+      <!-- material="shader: gradient; topColor: 250 12 147; bottomColor: 150 27 165; offset: -15" -->
+      
+      
+     
+       <!-- Original color -->
+      <!--  topColor: 238 25 125; bottomColor: 0 121 255; 
+      
+     <!--  topColor: 238 25 125; bottomColor: 13 164 233; offset: 0.01; -->
+      
+      <!-- My Fav One -->
+      <!--  topColor: 253 218 14; bottomColor: 237 19 129; offset: 0.01; -->
+      
+      <!-- Green Yellow Gradient  -->
+      <!--  topColor: 236 237 18; bottomColor: 14 178 225; offset: 0.01; -->
+      
+      <!-- Mint etc Gradient  -->
+      <!--  topColor: 236 237 18; bottomColor: 14 178 225; offset: 0.01; -->
+      
+      <!-- Blue Pink Gradient  -->
+      <!--  topColor: 0 174 239; bottomColor: 236 0 140; offset: 0.01; -->
+      
+      
+      
+      <!--<a-gradient-sky material="shader: gradient; side: back; topColor: 155 155 155; bottomColor: 0 0 0; offset: 1;"></a-gradient-sky>-->       
+     
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- CAMERA SETUP 01 --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Camera -->
+  <!-------------------------------------------------------------------------------------------------------->  
+     
+     <a-entity camera 
+               look-controls 
+               wasd-controls="acceleration: 1000;">
+         
+           <a-entity animation__click="property: scale; startEvents: click; easing: easeInCubic; dur: 100; from: 0.4 0.4 0.4; to: 1 1 1"
+                     animation__fusing="property: scale; startEvents: fusing; easing: easeInCubic; dur: 500; from: 1 1 1; to: 0.4 0.4 0.4"
+                     animation__mouseleave="property: scale; startEvents: mouseleave; easing: easeInCubic; dur: 10; to: 1 1 1"
+                     cursor="fuse: true;"
+                     material="color: yellow; shader: flat"
+                     position="0 0 -10"
+                     geometry="primitive: ring">
+         </a-entity>
+      
+          
+     </a-entity>
+     
+      
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Box Color Change --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Click on box to change color -->
+  <!-------------------------------------------------------------------------------------------------------->         
+  <!-- <a-entity cursor-listener id="box" position="-8 0 -5" rotation="0 45 0" geometry="primitive: box" material="color: blue" material="shader: gradient; side: double; topColor: 0 0 0; bottomColor: 155 155 155; offset: 15;"></a-entity>
+      
+      
+           <!-- Textured Box - Scales up on mouse enter -->     
+           <!-- REF FOR CLICK EVENT ABOVE
+               <a-box src="#texture02" position="-5 0 -5" rotation="0 45 0" shadow="receive: true"
+                      animation="property: rotation; to: 0 360 0; dur: 15000; easing: linear; repeat: indefinite"
+                      event-set__down="_event: mousedown; scale: 1.2 1.2 1.2"
+                      event-set__up="_event: mouseup; scale: 1 1 1"
+                      event-set__leave="_event: mouseleave; scale: 1 1 1">
+               </a-box> -->
+             
+            
+            
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Character Animation Reel --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Clicakable Video - Uses Aframe Custom component -->
+  <!-------------------------------------------------------------------------------------------------------->    
+             
+  <!-- This listens to custom Aframe registered component VIDEO HANDLER -->
+       
+      <!-- Character Reel - Video 1 -->
+      <a-entity position="20 0 0" rotation="0 -90 0" scale="1 1 1" videohandler>
+        
+           <a-entity position="0 0 0">
+               <a-video src="#vid1" width="12" height="6"></a-video>
+               
+               <a-entity position="0 3.8 0" 
+                    geometry="primitive: plane; height: auto; width: auto"
+                    material="shader: gradient; side: double; topColor: 0 0 0; bottomColor: 155 155 155; offset: 5;"
+                    text="width: 12; value: VFX Film, 360 Interactive Animation, Animated Feature">
+          </a-entity>
+               
+               
+               
+               <a-text value="Character Animation" color="#FAFAFA" position="0 5 0" align="center" rotation="0 0 0" scale="6 6 6"></a-text>
+          </a-entity> 
+    </a-entity>
+            
+      
+       <!-- test video - Don't call right now 
+      <a-entity position="10 10 0" rotation="0 90 0" scale="2 2 2" videohandler1>
+          
+           <a-entity position="0 0 0">
+               <a-video src="#vid3" width="8" height="4"></a-video>
+               
+               <a-text value="3D Design" color="#FAFAFA" position="0 25 0" align="center" rotation="0 180 0" scale="8 8 8"></a-text>
+               <a-text value="3D Character Animation" color="#FAFAFA" position="0 20 0" align="center" rotation="0 180 0" scale="8 8 8"></a-text>
+               <a-text value="Character Rigging" color="#FAFAFA" position="0 15 0" align="center" rotation="0 180 0" scale="8 8 8"></a-text>
+          </a-entity> 
+    </a-entity>-->
+        
+              
+         
+       
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- 3D Interactive --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Music Art Piece -->
+  <!-------------------------------------------------------------------------------------------------------->   
+  
+  <!-- Master Art | Product CTRL 
+  <a-entity position="0 -25 -30" 
+            rotation="0 0 0"
+            alongpath="path: 0,-10,-30 0,-10,50; closed: true; dur: 100000">   -->
+      
+      
+      <!-- Master Product 01 Control -->
+      <a-entity position="-30 0 -70"> 
+          
+           <!-- Art + Description -->
+            <a-entity animation-mixer="clip: *;"               
+                      gltf-model="src: url(/3dfiles/Art_Music_Piece_V02.gltf);"     
+                      event-set__enter="_event: mouseenter; _target: #musicArtText; visible: true"
+                      event-set__leave="_event: mouseleave; _target: #musicArtText; visible: false">
+                
+                    <a-text id="musicArtText" 
+                            value="Music Art" 
+                            align="center" 
+                            color="#FFF" 
+                            visible="false" 
+                            position="0 0 0" 
+                            scale="10 10 10"></a-text>        
+            </a-entity>
+          
+          <!--href="https://www.thehool.com/"-->
+          
+        <!-- Set for Product 01  -->
+        <a-entity position="0 -18 10" rotation="-90 45 0"> 
+            
+            <a-plane src="#texture01" 
+                     width="12" 
+                     height="30"                       
+                     shadow="receive: true" 
+                     material="wireframe: true">          
+            </a-plane>
+        
+          <!-- Add a wireframe Plane for Music Art Piece -->
+          <a-plane src="#texture01" 
+                     position="0 -4 0" 
+                     rotation="0 0 0"
+                     width="12" 
+                     height="30"                       
+                     shadow="receive: true" 
+                     material="wireframe: true">          
+           </a-plane>
+            
+       </a-entity>
+           
+</a-entity> 
+      
+    
+   
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Product 04 --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Dynamics -->
+  <!-------------------------------------------------------------------------------------------------------->   
+ 
+<a-entity position="40 0 -90"> 
+    
+    
+    
+  <a-entity position="-30 0 30"> 
+      
+  <!-- Add Lights -->
+        <!-- white Directional light -->
+        <a-entity light="type:directional; castShadow:true;" position="-6 10 7" intensity="0.4"></a-entity>
+  
+        <!-- Blue Fill light -->
+        <a-light type="point" color="lightblue" position="-7 0 9"></a-light>
+
+        <!-- Ambient lighting 
+        <a-light type="ambient" color="#111"></a-light>-->
+        
+  </a-entity>
+        
+      <a-entity position="0 0 0"> 
+          
+            <a-entity position="0 -4 0"
+                      scale="70 70 70"
+                      shadow="receive: true" 
+                      material="src: #texture07" 
+                      animation-mixer="clip: *;"               
+                      gltf-model="src: url(/3dfiles/Crumble_Export_V14.gltf);" 
+                      href="https://dynamics-anim-v6.glitch.me/" 
+                      target="_blank" 
+                      begin="click"
+                      event-set__enter="_event: mouseenter; _target: #connectionText; visible: true"
+                      event-set__leave="_event: mouseleave; _target: #connectionText; visible: false">
+                
+                    <a-text id="connectionText" 
+                            value="Connection" 
+                            align="center" 
+                            color="#FFF" 
+                            visible="false" 
+                            position="0 0 0" 
+                            scale=".2 .2 .2"></a-text>        
+            </a-entity>
+      
+         <a-entity shadow="receive: true">
+           
+            <a-plane src="#texture01" 
+                     position="0 -18 10" 
+                     rotation="-90 14 15"
+                     width="20" 
+                     height="20"                       
+                     material="wireframe: false">          
+            </a-plane>
+        </a-entity>
+        
+       
+      </a-entity>   
+        
+    </a-entity>   
+      
+      
+
+            
+      
+      
+  <!---IMAGES --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- My Artwork -->
+  <!-------------------------------------------------------------------------------------------------------->    
+      
+      
+   <!-- Good layout setup for pop ups when hover on objects platforms -->  
+   <a-entity position="-40 0 0"
+             rotation="0 90 0">    
+          
+    <a-entity position="0 0 0"
+              scale="4 4 4"
+              layout="type: box; 
+                      
+                      align: center; 
+                      columns: 4; 
+                      marginColumn: 1;
+                      margin: 2;
+                      marginRow: 1;
+                      plane: xy;
+                      ">
+                
+        <a-entity audiohandler mixin="image" material="src: #texture01"></a-entity>
+        <a-entity mixin="image" material="src: #pinnacles"></a-entity>
+        <a-entity mixin="image" material="src: #redwoods"></a-entity>
+        <a-entity mixin="image" material="src: #pinnacles"></a-entity>
+        <a-entity mixin="image" material="src: #redwoods"></a-entity>
+        <a-entity mixin="image" material="src: #pinnacles"></a-entity>
+        <a-entity mixin="image" material="src: #redwoods"></a-entity>
+        <a-entity mixin="image" material="src: #pinnacles"></a-entity>
+        <a-entity mixin="image" material="src: #redwoods"></a-entity>
+        <a-entity audiohandler mixin="image" material="src: #texture01"></a-entity>
+        <a-entity mixin="image" material="wireframe: false"></a-entity>
+        <a-entity mixin="image" material="src: #redwoods"></a-entity>
+        <a-entity audiohandler mixin="image" material="src: #texture01"></a-entity>
+        <a-entity mixin="image" material="wireframe: false"></a-entity>
+        <a-entity audiohandler mixin="image" material="src: #texture01"></a-entity>
+        <a-entity mixin="image" material="wireframe: false"></a-entity>  
+        
+    </a-entity>
+ </a-entity>      
+      
+      
+      
+      
+      
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- GROUND --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Hairy Floor -->
+  <!-------------------------------------------------------------------------------------------------------->   
+ 
+<a-entity position="0 -600 -400" scale="120 120 120"> 
+      
+      <a-entity position="0 0 0"> 
+          
+            <a-entity 
+                      position="0 0 0"
+                      scale="1 1 1"
+                      shadow="receive: true" 
+                      gltf-model="src: url(/3dfiles/HairyEntrance_V03.gltf);"
+                      animation-mixer="clip: *;">        
+            </a-entity>
+      
+          
+        
+         
+      </a-entity>   
+        
+    </a-entity> 
+      
+      
+ 
+     
+        
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- World Art --> 
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- 3D Motion graphics from Maya -->
+    <!-------------------------------------------------------------------------------------------------------->   
+   
+<!--    <a-entity position="0 70 -70">                 
+            <a-entity position="0 0 0" rotation="0 0 0" scale="1 1 1"  
+                      animation-mixer="clip: *;"                 
+                      gltf-model="src: url(/3dfiles/Floating_Art_01_V04.gltf);">
+            </a-entity>
+      </a-entity> -->
+     
+
+        
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- World Art --> 
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- Checkered Sphere Art -->
+    <!-------------------------------------------------------------------------------------------------------->     
+     
+    <!-- Add checker sphere -->
+    <a-entity position="-50 60 -110" rotation="90 0 0"
+              animation="property: rotation; to: 0 360 0; dur: 15000; easing: linear; loop: true; repeat: indefinite">
+
+        <a-sphere rotation="0 0 0" radius="3" src="#texture01"></a-sphere>
+    </a-entity>
+     
+     
+     
+     
+     
+      <!-------------------------------------------------------------------------------------------------------->
+    <!-- Product 03 --> 
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- Gravity Vase -->
+    <!--------------------------------------------------------------------------------------------------------> 
+   
+   <!-- <a-entity position="0 10 -20" rotation="0 0 0" > 
+        
+            <a-entity id="target" position="0 0 0" rotation="0 0 0"             
+                      animation-mixer="clip: *;"                 
+                      gltf-model="src: url(/3dfiles/gravity_set_V09.gltf);" 
+                      href="https://www.thehool.com/shop/gravity/" target="_blank"
+                      event-set__enter="_event: mouseenter; _target: #gravityVaseText; visible: true"
+                      event-set__leave="_event: mouseleave; _target: #gravityVaseText; visible: false">
+
+                     <!-- Pop up Gravity Vase Text 
+                     <a-text id="gravityVaseText" value="Gravity Vase" align="center" color="#FFF" visible="true">
+                     </a-text>  
+            </a-entity>
+        
+        
+                    <!-- Gravity Vase Base 
+                    <a-entity position="2 -17 -78" rotation="0 0 0">
+                        
+                        <a-entity src="#texture01" 
+                                  geometry="primitive: circle; 
+                                            radius: 6;
+                                            segments: 1;
+                                            thetaStart: 0;
+                                            thetaLength: 90;"          
+                                  material="wireframe: true" 
+                                  material="side: double">
+                        </a-entity>
+                       
+                   
+                        <a-plane id="gravityImage01" src="#texture07" position="0 2 0" rotation="0 0 0" width="10" height="10" visible="false"
+                                 event-set__down="_event: mousedown; _target: #gravityImage01; visible: true"
+                                 event-set__up="_event: mouseup; _target: #gravityImage01; visible: false"> 
+                        </a-plane>
+                        
+                        
+                    </a-entity> 
+
+        
+          </a-entity> -->
+        
+     
+     
+     
+          
+       <!-- Welcome To World 
+        <a-image src="#texture01" position="0 75 0" rotation="45 20 90" width="12" height="6" material="wireframe: true";
+                 
+                 event-set__enter="_event: mouseenter; _target: #welcomeText; visible: true"
+                 event-set__leave="_event: mouseleave; _target: #welcomeText; visible: false">
+        
+                <a-text id="welcomeText" value="Welcome to MOTION" align="center" color="#FFF" visible="false" position="0 12 0" rotation="0 0 -90" scale="8 8 8">
+                </a-text>        
+       </a-image>-->
+     
+     <!-- A underlay for text above -->
+     <!--geometry="primitive: plane; width: 3" material="color: #333">-->
+     
+     
+        <!-- Welcome To World 
+        <a-image src="#texture06" position="0 75 -5" rotation="45 20 90" width="12" height="6" material="wireframe: false";>
+                 
+                
+        
+                <a-text id="welcomeText" value="Welcome to MOTION" align="center" color="#FFF" visible="false" position="0 8 0" rotation="0 0 -90" scale="20 20 20">
+                </a-text>        
+       </a-image>-->
+     
+       
+
+     <a-entity position="-65 70 -100" > 
+     <a-entity line="start: 0, 2, 0; end: 0 -1 -10; color: cyan"
+               line__2="start: -2, 4, 5; end: 0 4 -3; color: yellow"></a-entity>
+     
+     </a-entity>
+     
+  
+     
+     <!-- Big sphere towards camera 
+      <a-entity position="0 30 -90" rotation="0 0 0"
+                alongpath="path: -20,0,-100 0,10,20 60,0,50 0,0,30 -50,0,0 0,0,-70; closed: true; dur: 15000; visible: true">
+         <a-entity
+              id="sph"
+              geometry="primitive:sphere; radius:0.5"
+              material= "src: #texture01";
+              position="0 0 30"
+              rotation="0 0 0"
+ 
+              animation="property: rotation; to: 0 0 360; dur: 3000;">
+         </a-entity>
+     </a-entity>-->
+      
+          
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- SkY --> 
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- Gravity Vase -->
+    <!--------------------------------------------------------------------------------------------------------> 
+      
+     <!-- Add 360 Image -->
+     <a-sky src="#skyTexture" color="grey" scale="1 1 1"></a-sky>
+      
+     <a-light type="directional" color="#bbb" intensity="0.3" position="-300 200 -150" light="castShadow: true"></a-light>
+     
+     <a-light type="ambient" color="#fff" light=""></a-light>     
+ 
+    </a-scene>
+    
+ 
+    
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- PLAY & PAUSE VIDEO --> 
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- This script plays and pauses video -->
+    <!-------------------------------------------------------------------------------------------------------->    
+    <script>
+        var vid = document.getElementById('vid1');
+        //console.log('vid3');
+
+        document.getElementById('play-button').addEventListener("click", function(e){
+         // this.style.display = 'none';
+          vid.play(); 
+        }, false);
+
+          document.getElementById('pause-button').addEventListener("click", function(e){
+         // this.style.display = 'none';
+          vid.pause();
+
+        }, false);
+        
+   </script>
+    
+      
+ 
+</body>
+   
+</html>

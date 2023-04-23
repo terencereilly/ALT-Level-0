@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>ALT LEvels LTD</title>
+    <meta name="description" content="ALT LEvels LTD">
+  
+
+    <!-- Load A-Frame Framework -->
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>  
+
+
+
+
+
+      
+    
+      
+    <script src="https://cdn.glitch.com/ec5b44d4-a61e-4e39-a3dd-e10748aed261%2Faframe-extras.js?1524237399654"></script>
+      
+    <!-- Load Event Set Component - Enables you to click and interact with A-Frame code -->
+    <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script>
+        
+    <!-- Aframe Layout component -->
+    <script src="https://unpkg.com/aframe-layout-component@5.3.0/dist/aframe-layout-component.min.js"></script>
+      
+   <!-- Aframe Gradient Sky component -->  
+   <script src="https://rawgit.com/zcanter/aframe-gradient-sky/master/dist/gradientsky.min.js"></script>   
+
+
+
+    
+    <script src="https://cdn.glitch.com/2663c2a8-c33a-4b4b-aee4-dffb49e5fa3e%2Faframe-tooltip-component.js?1527693355276"></script>
+
+    
+    <script src="https://cdn.glitch.com/2663c2a8-c33a-4b4b-aee4-dffb49e5fa3e%2Fcamera-position.js?1527692992364"></script>
+    <script src="https://cdn.glitch.com/2663c2a8-c33a-4b4b-aee4-dffb49e5fa3e%2Fground.js?1527693154509"></script>
+    <script src="https://cdn.glitch.com/2663c2a8-c33a-4b4b-aee4-dffb49e5fa3e%2Flink-controls.js?1527692792927"></script>
+    <script src="https://cdn.glitch.com/2663c2a8-c33a-4b4b-aee4-dffb49e5fa3e%2FskyGradient.js?1527693991282"></script>
+    
+    <!--Added in (brings in animation for gltfs) -->
+    <script src="https://cdn.glitch.com/ec5b44d4-a61e-4e39-a3dd-e10748aed261%2Faframe-extras.js?1524237399654"></script>
+    
+    <!-- Load Event Set Component - Enables you to click and interact with A-Frame code -->
+   <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script>
+
+
+   
+   <!-- Add this -->
+   <!-- https://github.com/wizgrav/aframe-effects -->
+      
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Styles - CSS --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!--  --> 
+  <!-------------------------------------------------------------------------------------------------------->      
+  <style>
+       
+        #play-button {
+        position: fixed;
+        top: calc(44% - 1em);
+        left: calc(50% - 2em);
+        width: 4em;
+        height: 2em;
+        z-index: 10;
+        }
+
+        #pause-button {
+        position: fixed;
+        top: calc(56% - 1em);
+        left: calc(50% - 2em);
+        width: 4em;
+        height: 2em;
+        z-index: 10;
+        } 
+          
+   </style> 
+      
+      
+      
+      
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Register Component --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Along a path component -->
+  <!-------------------------------------------------------------------------------------------------------->      
+ 
+      <script>
+        (function() {
+        'use strict';
+
+        var alongpathComp = {
+          schema: {
+            path     : { default: ''    },
+            closed   : { default: false },
+            dur      : { default: 1000  }
+          },
+
+          init: function() {
+              var ent = this.el;
+              var d = this.data;
+              var points = d.path.split(' ').map(function(p) {
+                  p = p.split(',');
+                  return new THREE.Vector3(
+                      parseFloat(p[0]),
+                      parseFloat(p[1]),
+                      parseFloat(p[2])
+                  );
+              });
+              var ctor = d.closed ? 'ClosedSplineCurve3' : 'SplineCurve3';
+              var curve = new THREE[ctor](points);
+
+              var onFrame = function onFrame(t) {
+                window.requestAnimationFrame(onFrame);
+                t = t % d.dur;
+                var i = t / d.dur;
+                try {
+                  var p = curve.getPoint(i);
+                  ent.setAttribute('position', p);
+                } catch (ex) {}
+              };
+
+              onFrame();
+          },
+
+          update: function(oldData) {},
+
+          remove: function() {}
+        };
+
+        AFRAME.registerComponent('alongpath', alongpathComp);
+        })();
+    
+</script>
+      
+   
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Register Component --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Gltf Part Selection Component -- Split gltf export into different model parts to access for code -->
+  <!-------------------------------------------------------------------------------------------------------->      
+
+       <script>
+      AFRAME.registerComponent('model-subset', {
+  schema: {
+    target: {default: '', type: 'selector'},
+    name: {default: ''}
+  },
+  init: function () {
+    var el = this.el;
+    var data = this.data;
+    data.target.addEventListener('model-loaded', function (e) {
+      var model = e.detail.model;
+      var subset = model.getObjectByName(data.name);
+      el.setObject3D('mesh', subset.clone());
+    });
+  },
+  update: function () { /* ... */ },
+  remove: function () { /* ... */ }
+});
+      
+      
+  </script>    
+               
+     
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Register Component --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Audio Component --> <!-- Play audio on mouse clicks -->
+  <!-------------------------------------------------------------------------------------------------------->          
+
+      
+ <!-- This one works -->     
+     <script>
+  AFRAME.registerComponent('audiohandler', {
+    init: function() {
+      let playing = false;
+      let audio = document.querySelector("#neigh");
+      this.el.addEventListener('click', () => {
+        if (!playing) {
+          audio.play();
+        } else {
+          audio.pause();
+          audio.currentTime;
+        }
+        playing = !playing;
+      });
+    }
+  })
+
+</script>
+      
+      
+     
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Register Component --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Video Component --> <!-- Play videos on mouse click -->
+  <!-------------------------------------------------------------------------------------------------------->          
+
+      
+ <!-- This one works -->    
+  <script>
+      AFRAME.registerComponent('videohandler', {
+      
+        init: function() {
+              let playing = false;
+
+              let video = document.querySelector("#vid1");
+        
+              this.el.addEventListener('click', () => {
+                if (!playing) {
+                  video.play();
+
+                } else {
+                  video.pause();
+                  video.currentTime; 
+                } 
+
+                playing = !playing;
+              });
+            }
+          })
+
+</script>  
+      
+ <!-- This one works - not using right now though -->    
+  <script>
+      AFRAME.registerComponent('videohandler1', {
+      
+        init: function() {
+              let playing = false;
+
+              let video1 = document.querySelector("#vid2");
+
+              this.el.addEventListener('click', () => {
+                if (!playing) {
+                  video1.play();
+
+                } else {
+                  video1.pause();
+                  video1.currentTime; 
+                } 
+
+                playing = !playing;
+              });
+            }
+          })
+
+</script>  
+  
+      
+      
+      
+      
+ <!-------------------------------------------------------------------------------------------------------->
+  <!-- Register Component --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Change Colour Component --> 
+  <!-------------------------------------------------------------------------------------------------------->       
+      
+    <Script> 
+      // Component to change to a sequential color on click.
+AFRAME.registerComponent('cursor-listener', {
+  init: function () {
+    var lastIndex = -1;
+    var COLORS = ['red', 'green', 'blue'];
+    this.el.addEventListener('click', function (evt) {
+      lastIndex = (lastIndex + 1) % COLORS.length;
+      this.setAttribute('material', 'color', COLORS[lastIndex]);
+      console.log('I was clicked at: ', evt.detail.intersection.point);
+    });
+  }
+});
+      
+</Script>
+      
+      
+      
+      
+      
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Register Component --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Pause and play videos with buttons Component --> 
+  <!-------------------------------------------------------------------------------------------------------->   
+      
+      <script> window.addEventListener('click', function () {  
+               var v = document.querySelector('#vid');
+                   v.pause(); 
+          }); 
+      </script>
+      
+      
+ 
+      
+      
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Register Component --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Event Listener Component --> <!-- Scale on Mouse Enter -->
+  <!-------------------------------------------------------------------------------------------------------->       
+      <script>
+  AFRAME.registerComponent('scale-on-mouseenter', {
+    schema: {
+      to: {default: '1.1 1.1 1.1'}
+    },
+
+    init: function () {
+      var data = this.data;
+      this.el.addEventListener('mouseenter', function () {
+        this.setAttribute('scale', data.to);
+      });
+    }
+  });
+</script>
+      
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Register Component --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Event Listener Component --> <!-- Scale on Mouse Leave -->
+  <!-------------------------------------------------------------------------------------------------------->       
+      <script>
+  AFRAME.registerComponent('scale-on-mouseleave', {
+    schema: {
+      to: {default: '1 1 1'}
+    },
+
+    init: function () {
+      var data = this.data;
+      this.el.addEventListener('mouseleave', function () {
+        this.setAttribute('scale', data.to);
+      });
+    }
+  });
+</script>
+      
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Register Component --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Event Listener Component --> <!-- Hide on Mousedown -->
+  <!-------------------------------------------------------------------------------------------------------->       
+      <script>
+  AFRAME.registerComponent('scale-on-mousedown', {
+    schema: {
+      to: {default: '0 0 0'}
+    },
+
+    init: function () {
+      var data = this.data;
+      this.el.addEventListener('mousedown', function () {
+        this.setAttribute('scale', data.to);
+      });
+    }
+  });
+</script>     
+      
+      
+      
+      
+      
+      
+</head>
+ 
+<body>
+     
+  <a-scene fog="color: #444; near: 0; far: 30;" 
+           raycaster="far: 30; objects: [link];" 
+           cursor="rayOrigin: mouse" 
+           camera-position>
+
+ <!--
+  <a-scene fog="type: linear; 
+                color: #444;
+                near: 1;
+                far: 200">
+--> 
+        
+      
+      
+      <!-------------------------------------------------------------------------------------------------------->
+      <!-- Asset Management System --> 
+      <!-------------------------------------------------------------------------------------------------------->
+      <!-- Load all my assets --> 
+      <!-------------------------------------------------------------------------------------------------------->  
+      <a-assets>    
+
+        <img id="optical-verlet-nft" crossOrigin="anonymous" src="https://cdn.glitch.global/b90bd2ca-b89c-49ab-9cad-c074f2e78f95/Optical%20Verlet_Image.jpg?v=1641894898637">
+        <img id="thumbSunrise" crossOrigin="anonymous" src="https://cdn.aframe.io/link-traversal/thumbs/sunrise.png">
+        <img id="thumbCity" crossOrigin="anonymous" src="https://cdn.aframe.io/link-traversal/thumbs/city.png">
+          
+        <img id="skyTexture" src="https://cdn.glitch.com/49eedea1-b411-4200-945d-37ee83685cf4%2FMilkyway_V1.jpg?1550705749631">
+        <img id="texture01" src="https://cdn.glitch.com/e1692e96-b543-451a-b75d-36e0b3b850e7%2FChecker_Texture_V01.jpg?1550581281017">
+        <img id="texture02" src="https://cdn.glitch.com/e1692e96-b543-451a-b75d-36e0b3b850e7%2FBronze_Dirt_Texture_01_V01.jpg?1550581286437">
+        <img id="texture04" src="https://cdn.glitch.com/1d7f0b18-17e4-4f2b-82b9-3ffbfb200207%2FTriangle_Still_01.jpg?1550737605553">  
+        
+        
+        <img id="texture06" src="3dfiles/Grad_Ramp_Texture_03_V01.jpg" crossorigin="anonymous">
+        <img id="everglades" src="3dfiles/gradient1.jpg" crossorigin="anonymous">
+        <img id="lassen" src="3dfiles/gradient2.jpg" crossorigin="anonymous">
+        <img id="pinnacles" src="3dfiles/Grad_Ramp_Texture_01_V01.jpg" crossorigin="anonymous">
+        <img id="redwoods" src="3dfiles/Grad_Ramp_Texture_02_V01.jpg" crossorigin="anonymous">
+        <img id="sequoia" src="3dfiles/Grad_Ramp_Texture_04_V01.jpg" crossorigin="anonymous">
+        <img id="yosemite" src="3dfiles/Grad_Ramp_Texture_03_V01.jpg" crossorigin="anonymous">
+                               
+        <a-mixin id="image" geometry="primitive: plane; height: 2; width: 2" material="shader: flat"></a-mixin>   
+          
+           
+     <!-------------------------------------------------------------------------------------------------------->
+     <!-- AUDIO ASSETS --> 
+     <!-------------------------------------------------------------------------------------------------------->
+     <!-- All Audio -->
+     <!-------------------------------------------------------------------------------------------------------->  
+
+      <!-- This plays the audio automatically -->    
+      <audio id="neigh" 
+             src="https://supermedium.github.io/oasis-audio/egg/strangerthings.mp3"
+             crossorigin="anonymous"
+             autoplay="true"
+             loop="true">
+      </audio>
+
+
+     <!-------------------------------------------------------------------------------------------------------->
+     <!-- VIDEO ASSETS --> 
+     <!-------------------------------------------------------------------------------------------------------->
+     <!-- All Videos -->
+     <!--------------------------------------------------------------------------------------------------------> 
+
+
+      <!-- Character Reel - Video works with pause and play button + Fuse control on Aframe Camera -->
+    <!--  <video id="vid1" 
+             src="3dfiles/MaryAnim_1.mov"
+             crossorigin="anonymous"
+             autoplay="false"
+             loop="true">
+      </video>-->
+
+      <!-- Video works with pause and play button - WORKS on Safari, Chrome and Firefox on mobile ! 
+      <video id="vid3" 
+             src="https://cdn.glitch.com/f742948b-5853-47ae-aa00-8a56b33ad2c4%2FPreview_09.mov?1546914110197"
+             crossOrigin="anonymous"
+             autoplay="false"
+             loop="true"
+             style="display: bold">
+      </video>-->
+          
+          
+          
+       <!--    <a-mixin id="light"
+                 geometry="primitive: sphere; radius: 0.5"
+                 material="color: #FFF; shader: flat"
+                 light="color: #DDDDFF; distance: 10; intensity: 1.0; type: point"></a-mixin>-->
+          
+                   
+     <!-------------------------------------------------------------------------------------------------------->
+     <!--For Ref Only --> 
+     <!-------------------------------------------------------------------------------------------------------->
+     <!-- Tags for Asset Management System -->
+     <!--------------------------------------------------------------------------------------------------------> 
+     <!--
+     <a-asset-item> - Miscellaneous assets such as 3D models and materials
+     <audio> - Sound files
+     <img> - Image textures
+     <video> - Video textures -->
+
+          
+          // Add labels / Notes in here
+     </a-assets>
+
+     <a-link scale-on-mouseenter 
+             scale-on-mouseleave 
+             href="https://olta.art/artworks/optical-verlet" 
+             position="-8 1.5 0" 
+             rotation="0 90 0" 
+             scale="3 3 3"
+             image="#optical-verlet-nft" >
+      </a-link>
+      
+     <a-link scale-on-mouseenter 
+             scale-on-mouseleave 
+             href="https://sunrise-world.glitch.me/" 
+             position="0 1.5 -15" 
+             image="#thumbSunrise">
+      </a-link>
+      
+     <a-link scale-on-mouseenter 
+             scale-on-mouseleave 
+             href="https://olta.art/artworks/chaos-theory" 
+             position="8 1.5 0" 
+             rotation="0 90 0" 
+             image="#thumbCity">
+      </a-link>
+      
+
+   <!-------------------------------------------------------------------------------------------------------->
+   <!-- HTML Buttons --> 
+   <!-------------------------------------------------------------------------------------------------------->
+   <!-- Variety of html buttons -->
+   <!-------------------------------------------------------------------------------------------------------->   
+   
+   <!--  
+   <button id="play-button">Play</button>
+   <button id="pause-button">Pause</button>
+      -->
+  
+   <!-------------------------------------------------------------------------------------------------------->
+   <!-- LIGHTS--> 
+   <!-------------------------------------------------------------------------------------------------------->
+   <!-- Animated Lights -->
+   <!-------------------------------------------------------------------------------------------------------->   
+      
+   <!--   Lights. -->
+    <a-entity animation="property: rotation; to: 0 0 360; dur: 4000; easing: linear; loop: true">
+        <a-entity mixin="light" position="30 0 0"></a-entity>
+      </a-entity>
+       
+      <a-entity animation="property: rotation; to: 360 0 0; dur: 8000; easing: linear; loop: true">
+        <a-entity mixin="light" position="0 0 0"></a-entity>
+      </a-entity>
+      
+
+      
+              
+          <!--Environment  
+      <a-entity id="sky" 
+                geometry="primitive: sphere; radius: 30;"
+                material="shader: skyGradient; colorTop: #pink; colorBottom: #47c9ff; side: back"></a-entity>
+   --> 
+   <!--   <a-entity position="0 -0.25 0">
+      <a-entity text="value: Kroen Lab 8; color: #FAFAFA; width: 5; anchor: align" position="-0.9 3 -3" scale="1.3 1.3 1.3"></a-entity>
+      <a-entity text="value: Internet Censorship Tests : Arweave Spin up ; color: #FAFAFA; width: 1; anchor: align" position="-0.9 2.8 -3" scale="1.5 1.5 1.5"></a-entity>
+      </a-entity>-->
+    
+      <a-box src="#boxTexture" 
+             position="8 3 -12" 
+             rotation="45 45 0" 
+             scale=".8 .8 .8"
+             shadow="receive: true" 
+             animation="property: object3D.rotation.y; to: 180; dir: alternate; dur: 20000; loop: true"></a-box>
+
+ <!-- <a-sky src="#skyTexture"></a-sky>-->
+      
+      
+      
+     
+   <!--Lights-->
+   <a-light type="ambient" color="navy" intensity="0.1" ></a-light>
+   <a-light type="point" intensity="1" position="0 8 0"></a-light>  
+      
+      
+      
+           
+   <!--Grid Plane -->
+   <a-entity geometry="primitive: plane"
+           material = "color: white; wireframe: true"
+           position="0 5 -20"
+           rotation="45 10 0"
+           scale="12 12 12">
+   </a-entity>
+  
+      
+      
+      
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Ground Plane --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!---->
+  <!--------------------------------------------------------------------------------------------------------> 
+   
+      <!-- Ground Plane -->
+        <a-plane position="0 -8 0" 
+                 rotation="-90 0 0" 
+                 width="80" 
+                 height="80" 
+                 shadow="receive: true">
+      </a-plane>  
+          
+
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- WELCOME --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Welcome to my Level 101 -->
+  <!-------------------------------------------------------------------------------------------------------->  
+  <a-entity position="0 3.2 0"
+               rotation="10 0 0"> 
+         
+         <a-text value="04/02/2022" 
+                  color="#FAFAFA" 
+                  position="2.8 0.5 -11" 
+                  align="center" 
+                  rotation="0 0 0" 
+                  scale="0.8 0.8 0.8">
+         </a-text>
+          
+         
+          <a-entity position="0 0 -10" 
+                    geometry="primitive: plane; height: auto; width: auto"
+                    material="shader: gradient; side: double; topColor: 0 0 0; bottomColor: 155 155 155; offset: 5;"
+                    text="width: 6; value: Next Levels Ltd">
+          </a-entity>
+         
+        
+         
+         <a-entity position="-0.45 -0.35 -10" 
+                   geometry="primitive: plane; height: auto; width: auto"
+                   material="shader: gradient; side: double; topColor: 0 0 0; bottomColor: 155 155 155; offset: 5;"
+                   text="width: 4.8; value: Experiement_000_wip_v08.html  "
+                   align="center" >
+          </a-entity>
+      </a-entity>
+      
+        
+      
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- AUDIO --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Choose Your own Audio -->
+  <!-------------------------------------------------------------------------------------------------------->  
+     <a-entity position="0 7 0"
+               rotation="45 0 0"> 
+         
+         <a-text value="Inspirational Playlist" 
+                  color="#FAFAFA" 
+                  position="-3.4 1.5 -11" 
+                  align="center" 
+                  rotation="0 0 0" 
+                  scale="5 5 5">
+         </a-text>
+          
+         
+          <a-entity position="0 0 -10" 
+                    geometry="primitive: plane; height: auto; width: auto"
+                    material="shader: gradient; side: double; topColor: 0 0 0; bottomColor: 155 155 155; offset: 5;"
+                    audiohandler scale-on-mouseenter scale-on-mouseleave
+                    text="width: 15; value: 80's fav's">
+          </a-entity>
+         
+      </a-entity>
+
+
+
+      
+      
+      
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- VISUAL PATH -->     
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Path - Select music -->
+  <!-------------------------------------------------------------------------------------------------------->      
+      
+      
+   <!-- Good layout setup for pop ups when hover on objects platforms -->  
+  
+       
+       <a-entity  position="0 -5 -15"
+                  rotation="-90 0 0"
+                  geometry="primitive: plane; height: 15; width: 15"
+                  src="#texture01"
+                  material="wireframe: true"> 
+       </a-entity>   
+      
+      
+      <a-entity  position="-15 -5 0"
+                  rotation="-90 0 0"
+                  geometry="primitive: plane; height: 15; width: 15"
+                  src="#texture01"
+                  material="wireframe: true"> 
+       </a-entity>  
+      
+            
+      <a-entity  position="15 -5 0"
+                  rotation="-90 0 0"
+                  geometry="primitive: plane; height: 15; width: 15"
+                  src="#texture01"
+                  material="wireframe: true"> 
+       </a-entity>   
+      
+      <a-entity  position="0 -5 15"
+                  rotation="-90 0 0"
+                  geometry="primitive: plane; height: 15; width: 15"
+                  src="#texture01"
+                  material="wireframe: true"> 
+       </a-entity>   
+      
+        
+ 
+ 
+                
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- AUDIO PATH --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Choose Your own Audio -->
+  <!-------------------------------------------------------------------------------------------------------->  
+     
+      
+      
+     <a-entity position="0 6 0">   
+      
+      <a-entity position="0 0 -18" 
+               rotation="-90 0 0">         
+          
+          <a-text value="" 
+                  color="#FAFAFA" 
+                  position="0 0 -11" 
+                  align="center" 
+                  rotation="0 0 0" 
+                  scale="6 6 6">
+         </a-text>
+         
+         <a-text value="" 
+                 color="#FAFAFA" 
+                 position="0 -1 -11" 
+                 align="center" 
+                 rotation="0 0 0" 
+                 scale="4 4 4">
+         </a-text>
+         
+      </a-entity>
+      
+      
+      
+      
+     <a-entity position="-26 0 0" 
+           rotation="-90 90 0">         
+
+       <a-text value="Bauhaus Expeiment_wip_v01.html" 
+              color="#FAFAFA" 
+              position="0 0 -11" 
+              align="center" 
+              rotation="0 0 0" 
+              scale="5 5 5">
+      </a-text>
+
+      <a-text value="COFFEe / Drinks " 
+             color="#FAFAFA" 
+             position="0 -1 -11" 
+             align="center" 
+             rotation="0 0 0" 
+             scale="4 4 4">
+      </a-text>
+
+   </a-entity>
+      
+      
+   <a-entity position="18 0 0" 
+           rotation="-90 -90 0">         
+
+       <a-text value="NFT Drop _ 30th Nov 2021" 
+              color="#FAFAFA" 
+              position="0 0 -11" 
+              align="center" 
+              rotation="0 0 0" 
+              scale="6 6 6">
+      </a-text>
+
+      <a-text value="xvdfgdfgdf" 
+             color="#FAFAFA" 
+             position="0 -1 -11" 
+             align="center" 
+             rotation="0 0 0" 
+             scale="4 4 4">
+      </a-text>
+
+   </a-entity>
+      
+   
+      <a-entity position="0 -4 33" 
+           rotation="-90 180 0">         
+
+       <a-text value="Meet me" 
+              color="#FAFAFA" 
+              position="0 0 -15" 
+              align="center" 
+              rotation="0 0 0" 
+              scale="8 8 8">
+      </a-text>
+
+      <a-text value="Airdropst" 
+             color="#FAFAFA" 
+             position="0 -2 -15" 
+             align="center" 
+             rotation="0 0 0" 
+             scale="4 4 4">
+      </a-text>
+
+   </a-entity>
+      
+  </a-entity>   
+      
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- BG TEXT INT --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Camera Static -->
+  <!--------------------------------------------------------------------------------------------------------> 
+      
+      
+       <!-- BG for Motion Text Welcome -->
+        <a-entity geometry="primitive: circle" 
+                  position="-5 72 -180"
+                  rotation="0 0 45"
+                  scale="30 30"
+                  material="shader: gradient; side: double; topColor: 0 0 0; bottomColor: 155 155 155; offset: 15;">
+        </a-entity> 
+      
+      
+      
+    <!--   Exit Motion World 
+        <a-entity geometry="primitive: circle" 
+                  position="0 72 180"
+                  rotation="0 0 45"
+                  scale="20 20"
+                  material="shader: gradient; side: double; topColor: 0 0 0; bottomColor: 155 155 155; offset: 15;">
+        </a-entity> -->
+      
+      <!-- Pink - Purple Gradient -->
+      <!-- material="shader: gradient; topColor: 250 12 147; bottomColor: 150 27 165; offset: -15" -->
+      
+      
+     
+       <!-- Original color -->
+      <!--  topColor: 238 25 125; bottomColor: 0 121 255; 
+      
+     <!-- topColor: 238 25 125; bottomColor: 13 164 233; offset: 0.01; -->
+      
+      <!-- My Fav One -->
+      <!--  topColor: 253 218 14; bottomColor: 237 19 129; offset: 0.01; -->
+      
+      <!-- Green Yellow Gradient  -->
+      <!--  topColor: 236 237 18; bottomColor: 14 178 225; offset: 0.01; -->
+      
+      <!-- Mint etc Gradient  -->
+      <!--  topColor: 236 237 18; bottomColor: 14 178 225; offset: 0.01; -->
+      
+      <!-- Blue Pink Gradient  -->
+      <!--  topColor: 0 174 239; bottomColor: 236 0 140; offset: 0.01; -->
+      
+      
+      
+      <!--<a-gradient-sky material="shader: gradient; side: back; topColor: 155 155 155; bottomColor: 0 0 0; offset: 1;"></a-gradient-sky> -->      
+     
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- CAMERA SETUP 01 --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Camera | cursor="fuse: true;"-->
+  <!-------------------------------------------------------------------------------------------------------->  
+      
+
+   <!-- CAMERA SETUP 01 -->
+   <!--  <a-entity camera>
+         
+         
+         
+           <a-entity animation__click="property: scale; startEvents: click; easing: easeInCubic; dur: 100; from: 0.3 0.3 0.3; to: 0.5 0.5 0.5"
+                     animation__fusing="property: scale; startEvents: fusing; easing: easeInCubic; dur: 100; from: 0.5 0.5 0.5; to: 0.3 0.3 0.3"
+                     animation__mouseleave="property: scale; startEvents: mouseleave; easing: easeInCubic; dur: 100; to: 0.5 0.5 0.5"
+                     material="color: yellow; shader: flat"
+                     raycaster="far: 100; objects: [link];" 
+                     cursor="rayOrigin: mouse; fuse: true;" 
+                     position="0 0 -8"
+                     geometry="primitive: ring">
+         </a-entity>
+      
+          
+     </a-entity>
+      -->
+      
+      
+       <!-- <a-entity camera 
+               look-controls 
+               wasd-controls="acceleration: 100;">
+         
+        <a-entity animation__click="property: scale; startEvents: click; easing: easeInCubic; dur: 100; from: 0.4 0.4 0.4; to: 1 1 1"
+                     animation__fusing="property: scale; startEvents: fusing; easing: easeInCubic; dur: 500; from: 1 1 1; to: 0.4 0.4 0.4"
+                     animation__mouseleave="property: scale; startEvents: mouseleave; easing: easeInCubic; dur: 100; to: 0.7 0.7 0.7"
+                     cursor="fuse: true;"
+                     raycaster="far: 100; objects: [link];"
+                     material="color: yellow; shader: flat"
+                     position="0 0 -12"
+                     geometry="primitive: ring">
+         </a-entity>
+    
+          
+     </a-entity>-->
+
+   
+          
+            
+            
+  <!-- ---------------------------------------------------------------------------------------------------- -->
+  <!-- Character Animation Reel --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Clicakable Video - Uses Aframe Custom component -->
+  <!-------------------------------------------------------------------------------------------------------->    
+             
+  <!-- This listens to custom Aframe registered component VIDEO HANDLER -->
+       
+      <!-- Character Reel - Video 1 -->
+   <!--   <a-entity scale-on-mouseenter scale-on-mouseleave position="20 0 0" rotation="0 -90 0" scale="1 1 1" videohandler>
+        
+           <a-entity position="0 0 0">
+               <a-video src="#vid1" width="12" height="6"></a-video>
+               
+               <a-entity position="0 3.8 0" 
+                    geometry="primitive: plane; height: auto; width: auto"
+                    material="shader: gradient; side: double; topColor: 0 0 0; bottomColor: 155 155 155; offset: 5;"
+                    text="width: 12; value: VFX Film, 360 Interactive Animation, Animated Feature">
+          </a-entity>
+               
+               
+               
+               <a-text value="Character Animation" color="#FAFAFA" position="0 5 0" align="center" rotation="0 0 0" scale="6 6 6"></a-text>
+          </a-entity> 
+    </a-entity>
+            
+             -->
+              
+         
+      
+      
+  <!---IMAGES --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- My Artwork -->
+  <!-------------------------------------------------------------------------------------------------------->    
+      
+      
+   <!-- Good layout setup for pop ups when hover on objects platforms -->  
+ <!--<a-entity position="-2 0 0"
+             rotation="0 90 0">    
+          
+    <a-entity position="0 0 0"
+              scale="1 1 1"
+              layout="type: box; 
+                      
+                      align: center; 
+                      columns: 4; 
+                      marginColumn: 1;
+                      margin: 2;
+                      marginRow: 1;
+                      plane: xy;
+                      ">
+                
+        <a-entity audiohandler mixin="image" material="src: #texture01"></a-entity>
+        
+        <a-entity scale-on-mouseenter scale-on-mouseleave mixin="image" material="src: #pinnacles"></a-entity>
+        <a-entity scale-on-mouseenter scale-on-mouseleave mixin="image" material="src: #texture04"></a-entity>
+        <a-entity scale-on-mouseenter scale-on-mouseleave mixin="image" material="src: #pinnacles"></a-entity>
+        <a-entity scale-on-mouseenter scale-on-mouseleave mixin="image" material="src: #redwoods"></a-entity>
+        <a-entity scale-on-mouseenter scale-on-mouseleave mixin="image" material="src: #pinnacles"></a-entity>
+        <a-entity scale-on-mouseenter scale-on-mouseleave mixin="image" material="src: #redwoods"></a-entity>
+        <a-entity scale-on-mouseenter scale-on-mouseleave mixin="image" material="src: #pinnacles"></a-entity>
+        <a-entity scale-on-mouseenter scale-on-mouseleave mixin="image" material="src: #redwoods"></a-entity>
+        <a-entity scale-on-mouseenter scale-on-mouseleave audiohandler mixin="image" material="src: #texture01"></a-entity>
+        <a-entity scale-on-mouseenter scale-on-mouseleave mixin="image" material="wireframe: false"></a-entity>
+        <a-entity scale-on-mouseenter scale-on-mouseleave mixin="image" material="src: #redwoods"></a-entity>
+        <a-entity scale-on-mouseenter scale-on-mouseleave audiohandler mixin="image" material="src: #texture01"></a-entity>
+        <a-entity scale-on-mouseenter scale-on-mouseleave mixin="image" material="wireframe: false"></a-entity>
+        <a-entity scale-on-mouseenter scale-on-mouseleave mixin="image" material="src: #texture01"></a-entity>
+        <a-entity scale-on-mouseenter scale-on-mouseleave mixin="image" material="wireframe: false"></a-entity>  
+        
+    </a-entity>
+ </a-entity>      
+      -->
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Box Color Change --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- Click on box to change color -->
+  <!-------------------------------------------------------------------------------------------------------->         
+<!--  <a-entity cursor-listener id="box" 
+            position="0 0 13" 
+            rotation="0 45 0" 
+            geometry="primitive: box" 
+            material="color: blue">
+  </a-entity>-->
+      
+      
+           <!-- Textured Box - Scales up on mouse enter -->     
+           <!-- REF FOR CLICK EVENT ABOVE -->
+        <!--       <a-box src="#texture02" position="-5 0 -10" rotation="0 45 0" shadow="receive: true"
+                      animation="property: rotation; to: 0 360 0; dur: 15000; easing: linear; repeat: indefinite"
+                      event-set__down="_event: mousedown; scale: 1.2 1.2 1.2"
+                      event-set__up="_event: mouseup; scale: 1 1 1">
+               </a-box> -->
+      
+   
+      
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- GROUND --> 
+  <!-------------------------------------------------------------------------------------------------------->
+  <!-- 3d model REF -->
+  <!-------------------------------------------------------------------------------------------------------->   
+ 
+
+    
+            
+<!-- <a-entity gltf-model="url(/path/to/tree.gltf)"></a-entity>-->
+   
+      <!--
+            <a-entity position="0 -50 -10" 
+                      rotation="0 90 0" 
+                      scale="5 5 5"                
+                      gltf-model="url(/3dfiles/Portal_Export_V20.glb);"
+                      material = "roughness: 0.5; 
+                                  metalness: 0.5;
+                                  wireframe: true"
+                      href="https://olta.art/artworks/optical-verlet" 
+                      target="_blank">   
+    </a-entity>  -->
+      
+   
+      
+ 
+     
+        
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- World Art --> 
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- Checkered Sphere Art -->
+    <!-------------------------------------------------------------------------------------------------------->     
+     
+    <!-- Add checker sphere -->
+    <a-entity position="-40 40 70" rotation="90 0 0"
+              animation="property: rotation; to: 0 360 0; dur: 15000; easing: linear; loop: true; repeat: indefinite">
+
+        <a-sphere rotation="0 0 0" radius="3" src="#texture01"></a-sphere>
+    </a-entity>
+     
+     
+     
+    
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- SkY --> 
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- Gravity Vase -->
+    <!--------------------------------------------------------------------------------------------------------> 
+      
+     <!--Original sky  -->
+   <!--  <a-sky src="#skyTexture" color="grey" scale="1 1 1"></a-sky>-->
+      
+      
+       <!-- Add 360 Image -->
+        <a-sky color="grey"></a-sky> 
+      
+    <!-- <a-light type="directional" color="#fff" intensity="0.6" position="-200 100 0" light="castShadow: true"></a-light>
+     
+     <a-light type="ambient" color="#fff" light=""></a-light> -->
+        
+        
+         <!--new Lights-->
+   <!--<a-light type="ambient" color="navy" intensity="1" ></a-light>
+   <a-light type="point" intensity="1" position="0 8 0"></a-light>  -->
+
+
+
+ 
+     <a-entity id="leftHand" link-controls="hand: left"></a-entity>
+     <a-entity id="rightHand" link-controls="hand: right"></a-entity>
+
+    </a-scene>
+    
+
+    
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- PLAY & PAUSE VIDEO --> 
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- This script plays and pauses video -->
+    <!-------------------------------------------------------------------------------------------------------->    
+<!--    <script>
+        var vid = document.getElementById('vid1');
+        //console.log('vid3');
+
+        document.getElementById('play-button').addEventListener("click", function(e){
+         // this.style.display = 'none';
+          vid.play(); 
+        }, false);
+
+          document.getElementById('pause-button').addEventListener("click", function(e){
+         // this.style.display = 'none';
+          vid.pause();
+
+        }, false);
+        
+   </script>-->
+    
+      
+ 
+</body>
+   
+</html>

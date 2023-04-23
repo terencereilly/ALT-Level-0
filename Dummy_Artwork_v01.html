@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Portal - InBetween</title>
+  <meta name="description" content="Placeholder_Artwork">
+
+  <!-- Load A-Frame Framework -->
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <!-- Aframe Gradient Sky component -->
+  <script src="https://rawgit.com/zcanter/aframe-gradient-sky/master/dist/gradientsky.min.js"></script>
+
+</head>
+
+<body>
+
+  <a-scene camera-position>
+
+
+    <a-camera position="0 0.6 2"
+      animation__position="property: position; from: 0 -2 1; to: 0 0.5 0; delay: 100; dur: 1050; easing: easeOutCubic">
+    </a-camera>
+
+
+    <a-assets>
+      <a-mixin id="image" geometry="primitive: plane; height: 2; width: 2" material="shader: flat"></a-mixin>
+      <a-mixin id="plane" geometry="height: 2; width: 2"></a-mixin>
+
+      <!-- new for loading in different images -->
+      <a-mixin id="image" geometry="height: 2; width: 2"></a-mixin>
+      <a-mixin id="delayVisible" event-set__loaded="visible: true" visible="false"></a-mixin>
+
+      <audio id="blip1" src="/audio/321103_nsstudios_blip1.wav"></audio>
+      <audio id="blip2" src="/audio/321104_nsstudios_blip2.wav"></audio>
+    </a-assets>
+
+
+
+
+
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- WELCOME -->
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- Welcome to my Level 101 -->
+    <!-------------------------------------------------------------------------------------------------------->
+    <a-entity position="0 0 0" rotation="0 0 0">
+
+      <a-entity position="0 0.2 -3"
+        material="shader: gradient; side: double; topColor: 0 0 0; bottomColor: 5 5 5; offset: 0.3;"
+        text="shader: msdf; 
+    anchor: center; 
+    width: 2; 
+    font: https://cdn.aframe.io/examples/ui/Viga-Regular.json; 
+    color: black; 
+    value: 
+    Portal is an ongoing collaborative art experience.
+
+    Once a new portal artwork drops, this link will update. Each portal(s) within the artworks will link through the next interactive experience, so you can navigate through the series 🙂">
+      </a-entity>
+
+
+    </a-entity>
+
+
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- AUDIO -->
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- Choose Your own Audio -->
+    <!-------------------------------------------------------------------------------------------------------->
+    <a-entity position="1.97 0.75 -1.5" rotation="0 0 0" scale="1 1 1">
+
+      <a-text value="Portal" color="black"
+        material="shader: gradient; side: back; topColor: -5 0 0; bottomColor: 155 155 155; offset: 0;" position="0 0 0"
+        anchor="center" rotation="0 0 0" scale="1 1 1">
+
+      </a-text>
+
+
+
+
+    </a-entity>
+
+
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- BG TEXT INT -->
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- Camera Static -->
+    <!-------------------------------------------------------------------------------------------------------->
+
+
+    <!-- BG for Motion Text Welcome -->
+    <!-- <a-entity geometry="primitive: circle" 
+                  position="0 80 -170"
+                  rotation="0 0 45"
+                  scale="30 30"
+                  material="shader: gradient; side: double; topColor: 0 0 0; bottomColor: 155 155 155; offset: 15;">
+        </a-entity>  -->
+
+
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- SkY -->
+    <!-------------------------------------------------------------------------------------------------------->
+    <!-- Gravity Vase -->
+    <!-------------------------------------------------------------------------------------------------------->
+
+   
+
+      <a-entity sound="autoplay: true; src: #blip1"></a-entity>
+      <a-entity sound="autoplay: true; src: #blip2"></a-entity>
+
+
+
+
+  </a-scene>
+
+
+
+</body>
+
+</html>

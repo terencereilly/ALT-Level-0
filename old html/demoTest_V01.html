@@ -1,0 +1,79 @@
+<html>
+  <head>
+   
+    <!-- Load A-Frame Framework -->
+    <script src="https://aframe.io/releases/0.9.2/aframe.min.js"></script>
+    
+    <!-- Load Event Set Component - Enables you to click and interact with A-Frame code -->
+    <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script>
+    
+  </head>
+  <body>
+    <a-scene>
+      
+      <!-- Load all my assets -->
+      <a-assets>
+          <a-image id="texture01" crossorigin="anonymous" src="https://cdn.glitch.com/e1692e96-b543-451a-b75d-36e0b3b850e7%2FChecker_Texture_V01.jpg?1550581281017"></a-image>
+          <a-image  id="texture02" crossorigin="anonymous" src="https://cdn.glitch.com/e1692e96-b543-451a-b75d-36e0b3b850e7%2FBronze_Dirt_Texture_01_V01.jpg?1550581286437"></a-image>
+          <a-image  id="texture03" crossorigin="anonymous" src="https://cdn.glitch.com/d022b461-dd24-4eac-9d07-cf08b96bdbd6%2FMarble_SlabWhite_1K_albedo.jpg?1550701425460"></a-image>
+          <a-image  id="texture04" crossorigin="anonymous" src="https://cdn.glitch.com/1d7f0b18-17e4-4f2b-82b9-3ffbfb200207%2FTriangle_Still_01.jpg?1550737605553"></a-image>
+  
+  
+          <a-image  id="skyTexture" crossorigin="anonymous" src="https://cdn.glitch.com/49eedea1-b411-4200-945d-37ee83685cf4%2FMilkyway_V1.jpg?1550705749631"></a-image>
+
+          <video id="video" crossorigin="anonymous" autoplay loop="true" src="https://cdn.glitch.com/a190912e-e65e-43d7-931e-71b27e873bd5%2FMy_Flashing_Video_Effect.mp4?1550706587106"></video>
+          <video id="video1" crossorigin="anonymous" autoplay loop="true" src="https://cdn.glitch.com/a190912e-e65e-43d7-931e-71b27e873bd5%2FWalking%20360%20Footage.mp4?1550706880791"></video>
+          <video id="video2" crossorigin="anonymous" autoplay loop="true" src="https://cdn.glitch.com/a190912e-e65e-43d7-931e-71b27e873bd5%2FDrive%20Up%20360%20Footage.mp4?1550707147423"></video>
+      </a-assets>
+      
+       <!-- Add a Box and animate it spinning -->
+       <a-box src="#texture02" position="0 0.5 -5" rotation="0 45 0" shadow="receive: true"
+              animation="property: rotation; to: 0 360 0; dur: 15000; easing: linear; repeat: indefinite"
+              event-set__down="_event: mousedown; scale: 1.2 1.2 1.2"
+              event-set__up="_event: mouseup; scale: 1 1 1"
+              event-set__leave="_event: mouseleave; scale: 1 1 1">
+       </a-box>
+   
+        <!-- Add a Plane -->
+        <a-plane src="#texture01" position="0 0 -5" rotation="-90 0 0" width="4" height="4" shadow="receive: true"
+                 event-set__down="_event: click; material.wireframe: true"
+                 event-set__up="_event: mouseup; material.wireframe: false"
+                 event-set__leave="_event: mouseleave; material.wireframe: false">
+        </a-plane>
+
+        <!-- Add Pic on wall when hover over descriptive text appears -->
+        <a-image src="#texture04" position="0 4.5 -8" radius="0.5" width="6" height="3" 
+                 event-set__enter="_event: mouseenter; _target: #cylinderText; visible: true"
+                 event-set__leave="_event: mouseleave; _target: #cylinderText; visible: false">
+        
+        <a-text id="cylinderText" value="Amazeballs Artwork!" align="center" color="#FFF" visible="false" position="0 3 0"
+                geometry="primitive: plane; width: 3" material="color: #333"></a-text>
+      </a-image>
+
+        <!-- Add a Camera and cursor -->
+        <a-camera position="0 1.8 0">
+            <a-cursor color="white"></a-cursor>
+        </a-camera>
+
+        <!-- Add Lights -->
+        <!-- white Directional light -->
+        <a-entity light="type:directional; castShadow:true;" position="-6 10 7"></a-entity>
+  
+        <!-- Blue Fill light -->
+        <a-light type="point" color="lightblue" position="-7 0 9"></a-light>
+
+        <!-- Ambient lighting -->
+        <a-light type="ambient" color="#333"></a-light>
+
+        <!-- Add 360 Image -->
+        <a-sky src="#skyTexture" color="grey"></a-sky> 
+        
+        <!-- Add 360 Video 
+        <a-videosphere src="#video2"></a-videosphere>-->
+
+    </a-scene>
+  </body>
+</html>
+
+
+  
