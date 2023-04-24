@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>InBetweens</title>
+    <title>ALT LEvels LTD</title>
     <meta name="description" content="ALT LEvels LTD">
   
 
@@ -348,14 +348,14 @@ AFRAME.registerComponent('cursor-listener', {
 <body>
      
   <a-scene renderer="colorManagement: true;"
-           fog="color: #444; near: 0; far: 65;" 
+           fog="color: #444; near: 0; far: 30;" 
            raycaster="far: 70; objects: [link];" 
            cursor="rayOrigin: mouse" 
            camera-position >
       
       
       <a-camera position="0 0.6 2"
-                animation__position="property: position; from: 0 0.6 10; to: 0 0.6 1.2; delay: 0; dur: 1050; easing: easeOutCubic">
+                animation__position="property: position; from: 0 0.6 10; to: 0 0.6 2; delay: 110; dur: 4050; easing: easeOutCubic">
       
       
       </a-camera>
@@ -378,12 +378,9 @@ AFRAME.registerComponent('cursor-listener', {
       <!-------------------------------------------------------------------------------------------------------->  
       <a-assets>    
 
-      
-          
-         <img id="thumbSunrise" crossOrigin="anonymous" src="/images/forest360.png">
-      
-         
-    
+        <img id="optical-verlet-nft" crossOrigin="anonymous" src="https://cdn.glitch.global/b90bd2ca-b89c-49ab-9cad-c074f2e78f95/Optical%20Verlet_Image.jpg?v=1641894898637">
+         <img id="thumbSunrise" crossOrigin="anonymous" src="https://cdn.aframe.io/link-traversal/thumbs/sunrise.png">
+        <img id="thumbCity" crossOrigin="anonymous" src="https://cdn.aframe.io/link-traversal/thumbs/city.png">
           
               
       <!-- This plays the audio automatically -->    
@@ -439,13 +436,13 @@ AFRAME.registerComponent('cursor-listener', {
       
       
       
-   <a-entity position="0 3 -5" rotation="35 0 0" scale="1.2 1.2 1.2">     
+<!--   <a-entity position="0 3 -5" rotation="35 0 0" scale="1.2 1.2 1.2">     
        
-       <!--Alt Levels Text -->
+       Alt Levels Text 
       <a-entity id="color" 
                 position="0 0.7 0"
                 animation="property: components.text.material.uniforms.color.value; type: color; to: grey; dir: alternate; loop: true"
-                text="color: white; align: center; value: ; width: 15"> <!--Add text in Value paramater --> 
+                text="color: white; align: center; value: Portal; width: 15">
       </a-entity>
          
       <a-entity position="0 1 -4"
@@ -456,9 +453,10 @@ AFRAME.registerComponent('cursor-listener', {
                       lineHeight: 40; 
                       letterSpacing: 6;
                       color: white;
-                      value: ">     <!--Add text in Value paramater --> 
+                      value: A quest for OLTA tokens hidden among interactive experiments in the ever evolving olta community... 
+                      [ Read More ]">
       </a-entity>        
- </a-entity>
+ </a-entity>-->
       
       
       
@@ -864,35 +862,65 @@ AFRAME.registerComponent('cursor-listener', {
 highlighted	Boolean to toggle link highlight color.	false
 highlightedColor	Border color when highlighted.	‘#24CAFF’   
           
-    visualAspectEnabled="true"   
+    visualAspectEnabled="true"   -->   
+          
+          
 
-    
-  
+      <!-- Optical Verlet Portal -->
+      <a-link scale-on-mouseenter 
+              scale-on-mouseleave
+              title= "Space Invaders WIP"
+              href="https://aframe.io/aframe/examples/test/pool/" 
+              position="0 -18 -65" 
+              rotation="0 -45 0" 
+              scale="1 1 1"
+              image="#optical-verlet-nft" >
+      </a-link>
+      
      <!-------------------------------------------------------------------------------------------------------->
-     <!-- Portal to Expeiment - Portal--> 
+     <!-- Portal to Expeiment - Sunrise --> 
      <!--------------------------------------------------------------------------------------------------------> 
      <a-link scale-on-mouseenter 
              scale-on-mouseleave
-             title= "2"
-             href="http://terencereilly3d.com/ForTheOnesLeftBehind/ForTheOnesLeftBehind_v05.html"
-             position="0 1 -35"
-             rotation="0 0 0" 
-             scale="1 1 1"
-             image="#thumbSunrise"
-             audio="#blip1">
-            <!-- material: 
-             color=‘#24CAFF’
-             highlighted="true"
+             title= "Ballyfog"
+             href="https://aframe.io/aframe/examples/showcase/spheres-and-fog/"
+             position="0 1.5 -15" 
+             image="#thumbSunrise">
+      <!--       material:
+         color=‘#24CAFF’
+             highlighted="false"
              highlightedColor=‘#24CAFF’-->
       </a-link>
       
      <!-------------------------------------------------------------------------------------------------------->
      <!-- Portal to Expeiment - Voxels --> 
      <!--------------------------------------------------------------------------------------------------------> 
-    
+     <a-link scale-on-mouseenter 
+             scale-on-mouseleave
+             title= "Clever Hints"
+             href="https://aframe.io/aframe/examples/showcase/ui/" 
+             position="30 35 -50" 
+             rotation="0 0 0" 
+             image="#thumbCity">
+      </a-link>     
 </a-entity>
       
      
+      
+      
+        <!-------------------------------------------------------------------------------------------------------->
+     <!-- Portal to Expeiment - Voxels --> 
+     <!--------------------------------------------------------------------------------------------------------> 
+     <a-link scale-on-mouseenter 
+             scale-on-mouseleave
+             title= "Animation"
+             href="http://terencereilly3d.com/ART_EVOLVE/examples/ArtE_RubberDingy_V02A.html" 
+             position="-48 27 -47" 
+             rotation="0 45 0" 
+             image="#thumbCity">
+      </a-link>     
+</a-entity>
+      
       
       
       
@@ -1258,17 +1286,17 @@ highlightedColor	Border color when highlighted.	‘#24CAFF’
       
 
    
-      <!--
-            <a-entity position="0 -50 -10" 
-                      rotation="0 90 0" 
-                      scale="5 5 5"                
-                      gltf-model="url(/3dfiles/Portal_Export_V20.glb);"
+      
+            <a-entity position="7 -7.7 -2" 
+                      rotation="0 130 0" 
+                      scale="1 1 1"                
+                      gltf-model="url(/3dfiles/Blender_Export_V01.glb);"
                       material = "roughness: 0.5; 
                                   metalness: 0.5;
-                                  wireframe: true"
-                      href="https://olta.art/artworks/optical-verlet" 
+                                  wireframe: false"
+                      href="" 
                       target="_blank">   
-    </a-entity>  -->
+    </a-entity>  
       
       
       
